@@ -16,7 +16,7 @@ class CarpoolTransaction {
 			~CarpoolTransaction();
 
 		//Transactions:
-			void MySQL_Connect(const string HOST, const string USER,
+			bool MySQL_Connect(const string HOST, const string USER,
 				const string PASSWORD, const string DB_NAME);
 
 			bool Sign_Up(CarpoolAccountPtr);
@@ -26,8 +26,9 @@ class CarpoolTransaction {
 			bool Is_SJID_Valid(string sjid);
 			bool Is_Utype_Valid(string utype);
 
-			string Sign_In(string uname, string passwd, bool &valid);
-			string User_SJID(string uname);
+			string Sign_In(string uname, string passwd, bool &SignIn);
+			void GetSignInData();
+			bool EditAccount(const string attribute, string sjid, const string attribute_value);
 
 			void message(string);
 
