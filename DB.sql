@@ -101,7 +101,7 @@ CREATE TABLE matches(
 insert into user values('103034004', 'Moira.Nickel@sjsu.edu', 'fossashriek', '5 Myers Dr. Yakima, WA 98908', ' Moira Nickel', 'GeZJuzAe', 'Staff', ' Squint', 'Spot');
 insert into user values('159030021', 'Fatima.Hauck@sjsu.edu', 'dovestechnician', '9172 Manor Station St. Massillon, OH 44646', ' Fatima Hauck', 'JuZLFXDX', 'Staff', ' Mila', 'Marshmallow');
 insert into user values('393807492', 'Ghislaine.Rolan@gmail.com', 'passionaterack', '268 Main St. Clinton, MD 20735', ' Ghislaine Rolan', 'JdhtSXn5', 'Student', ' Grace', 'Precious');
-	insert into user values('517837321', 'Clarice.Monterroso@sjsu.edu', 'washboardbulwark', '400 College Street Temple Hills, MD 20748', ' Clarice Monterroso', '7HedKZnj', 'Professor', ' Marble', 'Yogi');
+insert into user values('517837321', 'Clarice.Monterroso@sjsu.edu', 'washboardbulwark', '400 College Street Temple Hills, MD 20748', ' Clarice Monterroso', '7HedKZnj', 'Faculty', ' Marble', 'Yogi');
 insert into user values('344585989', 'Leonarda.Cronan@gmail.com', 'bicyclinggratis', '9095 Lyme St.Helotes, TX 78023', ' Leonarda Cronan', 'Lzmc6CQE', 'Staff', ' Darth', 'Glacier');
 insert into user values('441969669', 'Fausto.Sturm@sjsu.edu', 'fitswary', '15 Sheffield Ave.Nottingham, MD 21236', ' Fausto Sturm', '37w5Qwet', 'Student', ' Dunk', 'Katrina');
 insert into user values('437313975', 'Dillon.Coons@sjsu.edu', 'herdleader', '9703 Thorne Drive Hollywood, FL 33020', ' Dillon Coons', 'vLjx4MLT', 'Student', ' Jeter', 'Sponge');
