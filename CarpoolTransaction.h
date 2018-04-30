@@ -29,6 +29,11 @@ class CarpoolTransaction {
 			string Sign_In(string uname, string passwd, bool &SignIn);
 			void GetSignInData();
 			bool EditAccount(const string attribute, string sjid, const string attribute_value);
+			void DeleteAccount(const string sjid);
+			bool GetPasswdAttribute(const string passwd, const string sjid);
+						
+			bool GetDriverInfo(const string sjid);
+			bool AddDriverInfo(const string lic_no, const string sjid, const string exp_date);
 
 			void message(string);
 

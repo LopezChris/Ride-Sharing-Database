@@ -114,7 +114,7 @@ bool CarpoolTransaction::Is_Utype_Valid(string utype) {
 	if((utype == "FACULTY") || (utype == "STAFF") || (utype == "STUDENT")) 
 		return true;
 	else {
-		message("Error: User type must be a Student, Falculty, or Staff!");
+		message("Error: User type must be a Student, Faculty, or Staff!");
 		return false;
 	}
 }
@@ -204,9 +204,99 @@ bool CarpoolTransaction::EditAccount(const string attribute, string sjid, const 
 	 	return false;
 	 }
 	 else {
-	 	cout << attribute << " Update Succeeded!\n";
+	 	cout << "\n" << attribute << " Update Succeeded!\n";
 	 	return true;
 	 }
+}
+
+void CarpoolTransaction::DeleteAccount(const string sjid) {
+	stringstream ss;
+
+	ss << "DELETE FROM user WHERE SJSU_ID = '" << sjid << "'";
+
+	if(mysql_query(db_conn, ss.str().c_str())) {
+		cerr << "Error " << mysql_errno(db_conn) << ": " << mysql_error(db_conn) << "!\n";
+		message("\nAccount Deletion Failed!");
+	}
+	else message("\nAccount Deletion Succeeded!");
+}
+
+bool CarpoolTransaction::GetPasswdAttribute(const string passwd, const string sjid) {
+	stringstream ss;
+	string attr;
+	MYSQL_ROW row;
+	MYSQL_RES *rset;
+
+	ss << "SELECT PASSWORD FROM user WHERE SJSU_ID = '" << sjid << "'";
+
+	if(mysql_query(db_conn, ss.str().c_str())) {
+		cerr << "Error " << mysql_errno(db_conn) << ": " << mysql_error(db_conn) << "!\n";
+	 	message("\nPassword Retrieval Failed!");
+	 	return false;
+	}
+	else {
+		rset = mysql_use_result(db_conn);
+		row = mysql_fetch_row(rset);
+
+		if(row == NULL) {
+	 		message("\nPassword Retrieval Failed!");
+	 		mysql_free_result(rset);
+	 		return false;
+		}
+		else {
+			attr = *row;
+			if(attr ==  passwd) {
+				message("\nNew password is already in database!");
+				mysql_free_result(rset);
+				return false;
+			}
+			mysql_free_result(rset);
+			return true;
+		}
+	}
+}
+
+bool CarpoolTransaction::GetDriverInfo(const string sjid){
+	stringstream ss;
+	MYSQL_ROW row;
+	MYSQL_RES *rset;
+
+	ss << "SELECT SJID FROM driver WHERE SJID = '" << sjid << "'";
+	if(mysql_query(db_conn, ss.str().c_str())){
+		cerr << "Error " << mysql_errno(db_conn) << ": " << mysql_error(db_conn) << "!\n";
+		message("\nDriver info query failed!");
+		return false;
+	}
+	else{
+		rset = mysql_use_result(db_conn);
+		row = mysql_fetch_row(rset);
+		
+		if(row == NULL){
+			mysql_free_result(rset);
+			return false;  
+		}
+		else{
+			mysql_free_result(rset);
+			return true;
+		}
+	}
+
+}
+
+bool CarpoolTransaction::AddDriverInfo(const string lic_no, const string sjid, const string exp_date){
+	stringstream ss;
+
+	ss << "INSERT INTO driver VALUES('" << lic_no << "', '" << sjid << "', '" << exp_date << "')";
+			
+	if(mysql_query(db_conn, ss.str().c_str())){
+		cerr << "Error " << mysql_errno(db_conn) << ": " << mysql_error(db_conn) << "!\n";
+		message("\nDriver info addition failed!");
+		return false;
+	}
+	else{
+		message("\nDriver info addition succeeded!");
+		return true;
+	}	
 }
 
 void CarpoolTransaction::message(string msg) {
