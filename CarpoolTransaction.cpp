@@ -128,6 +128,7 @@ string CarpoolTransaction::Sign_In(string uname, string passwd, bool &SignIn) {
 	ss << "SELECT SJSU_ID, USER_NAME, PASSWORD FROM user WHERE USER_NAME = '"
 	   << uname << "' AND PASSWORD = '" << passwd << "'";
 	if(mysql_query(db_conn, ss.str().c_str())) {
+		cerr << "Error " << mysql_errno(db_conn) << ": " << mysql_error(db_conn) << "!\n";
 		message("\nError: Sign In Failed! Username or Password is Invalid!");
 		return "";
 	}
@@ -137,6 +138,7 @@ string CarpoolTransaction::Sign_In(string uname, string passwd, bool &SignIn) {
 		
 		if(row == NULL) {
 			message("\nError: Sign In Failed! Username or Password is Invalid!");
+			mysql_free_result(rset);
 			return "";
 		}
 		else {  
@@ -169,6 +171,7 @@ void CarpoolTransaction::GetSignInData() {
 	   << "ANSWER_SQ2 = '" << ans_sq_two << "'";
 
 	if(mysql_query(db_conn, ss.str().c_str())) {
+		cerr << "Error " << mysql_errno(db_conn) << ": " << mysql_error(db_conn) << "!\n";
 		message("\nError: Username and Password Retrieval Failed!");
 		return;
 	}
@@ -178,6 +181,7 @@ void CarpoolTransaction::GetSignInData() {
 
 		if(rows == NULL) {
 			message("\nError: Username and Password Retrieval Failed!");
+			mysql_free_result(rset);
 			return;
 		}
 		else {
@@ -187,9 +191,9 @@ void CarpoolTransaction::GetSignInData() {
 			cout << "\nYour username is: " << *rows
 				 << "\nYour password is: " << passwd
 				 << "\n";
+			mysql_free_result(rset);
 		}
 	}
-	mysql_free_result(rset);
 }
 
 bool CarpoolTransaction::EditAccount(const string attribute, string sjid, const string attribute_value) {
@@ -250,53 +254,187 @@ bool CarpoolTransaction::GetPasswdAttribute(const string passwd, const string sj
 				mysql_free_result(rset);
 				return false;
 			}
-			mysql_free_result(rset);
-			return true;
 		}
 	}
 }
 
-bool CarpoolTransaction::GetDriverInfo(const string sjid){
+bool CarpoolTransaction::GetDriverInfo(const string sjid) {
 	stringstream ss;
 	MYSQL_ROW row;
 	MYSQL_RES *rset;
 
 	ss << "SELECT SJID FROM driver WHERE SJID = '" << sjid << "'";
-	if(mysql_query(db_conn, ss.str().c_str())){
+	
+	if(mysql_query(db_conn, ss.str().c_str())) {
 		cerr << "Error " << mysql_errno(db_conn) << ": " << mysql_error(db_conn) << "!\n";
 		message("\nDriver info query failed!");
 		return false;
 	}
-	else{
+	else {
 		rset = mysql_use_result(db_conn);
 		row = mysql_fetch_row(rset);
 		
-		if(row == NULL){
+		if(row == NULL) {
 			mysql_free_result(rset);
 			return false;  
 		}
-		else{
+		else {
 			mysql_free_result(rset);
 			return true;
 		}
 	}
-
 }
 
-bool CarpoolTransaction::AddDriverInfo(const string lic_no, const string sjid, const string exp_date){
+bool CarpoolTransaction::AddDriverInfo(const string lic_no, const string sjid, const string exp_date,
+	const string reg_num, const string insurer, const string max_seats, const string model,
+	const string make) {
 	stringstream ss;
 
 	ss << "INSERT INTO driver VALUES('" << lic_no << "', '" << sjid << "', '" << exp_date << "')";
 			
-	if(mysql_query(db_conn, ss.str().c_str())){
+	if(mysql_query(db_conn, ss.str().c_str())) {
 		cerr << "Error " << mysql_errno(db_conn) << ": " << mysql_error(db_conn) << "!\n";
-		message("\nDriver info addition failed!");
+		message("\nDriver info (license number, license expiration date) addition failed!");
 		return false;
 	}
-	else{
-		message("\nDriver info addition succeeded!");
+	else {
+		message("\nDriver info (license number, license expiration date) addition succeeded!");
+		
+		ss.str("");
+
+		ss << "INSERT INTO cars VALUES('" << lic_no << "', '" << reg_num << "', '" << insurer << "', '"
+		   << max_seats << "', '" << model << "', '" << make << "')";
+
+		if(mysql_query(db_conn, ss.str().c_str())) {
+		cerr << "Error " << mysql_errno(db_conn) << ": " << mysql_error(db_conn) << "!\n";
+		message("\nVehicle info (registration number, insurance, max seats, model, make) addition failed!");
+		return false;
+		}
+
+		message("\nVehicle info (registration number, insurance, max seats, model, make) addition succeeded!");
 		return true;
 	}	
+}
+
+bool CarpoolTransaction::CreateRoute(const string sjid, string start_loc, string end_loc) {
+	MYSQL_RES *res;
+	MYSQL_ROW row;
+	stringstream ss;
+	ostringstream convert;
+	string rte_id, short_dist, created_on, depart_time, l_num;
+	int route_id, shortest_dist;
+
+	//Route ID
+	srand(time(NULL));
+	route_id = (rand() % 999999999) + 1;
+	convert << route_id;
+	rte_id = convert.str();
+	convert.str("");
+
+	//Shortest Distance
+	srand(time(NULL));
+	shortest_dist = (rand() % 25) + 1;
+	convert << shortest_dist;
+	short_dist = convert.str();
+	convert.str("");
+
+	if(!TimeFunction(created_on, depart_time)) {
+		message("\nRoute creation failed! Please try again.");
+		return false;
+	}
+
+	ss << "SELECT LICENSE_NUM FROM driver WHERE SJID = '" << sjid << "'";
+	if(mysql_query(db_conn, ss.str().c_str())) {
+		message("\nRoute creation1 failed! Please try again.");
+		return false;
+	}
+	else {
+		res = mysql_use_result(db_conn);
+		row = mysql_fetch_row(res);
+		l_num = *row;
+		cout << l_num;
+		mysql_free_result(res);
+		if(row == NULL) {
+			message("\nRoute creation2 failed! Please try again.");
+			//mysql_free_result(res);
+			return false;
+		}
+	}
+	ss.str("");
+	ss << "INSERT INTO has1 VALUES('" << l_num << "', '" << rte_id << "')";
+	if(mysql_query(db_conn, ss.str().c_str())) {
+
+		cerr << "Error " << mysql_errno(db_conn) << ": " << mysql_error(db_conn) << "!\n";
+		message("\nRoute creation3 failed! Please try again.");
+		//mysql_free_result(res);
+		return false;
+	}
+	//mysql_free_result(res);
+
+	ss.str("");
+	ss << "INSERT INTO route VALUES('" << rte_id << "', '" << created_on << "', '"
+	   << depart_time << "', '" << short_dist << "', '" << start_loc << "', '"
+	   << end_loc << "')";
+	if(mysql_query(db_conn, ss.str().c_str())) {
+		message("\nRoute creation4 failed! Please try again.");
+		return false;
+	}
+	
+	return true;
+}
+
+bool CarpoolTransaction::TimeFunction(string &created_on, string &depart_time) {
+	MYSQL_ROW rows;
+	MYSQL_RES *rset;
+	stringstream ss;
+
+	ss << "SELECT NOW(), ADDTIME(CURRENT_TIME(), 000500)";
+	if(mysql_query(db_conn, ss.str().c_str())) return false;
+	else {
+		rset = mysql_use_result(db_conn);
+		rows = mysql_fetch_row(rset);
+
+		if(rows == NULL) { mysql_free_result(rset); return false; }
+		else {
+			created_on = *rows;
+			depart_time = *(rows + 1);
+			mysql_free_result(rset);
+			return true;
+		}
+	}
+}
+
+bool CarpoolTransaction::FindMatch(const string sjid) {
+}
+
+bool CarpoolTransaction::CreateRequest(const string sjid, string start_loc, string end_loc,
+	string seats_req) {
+
+	stringstream ss;	
+	ostringstream convert;
+	string req_id, created_on, depart_time;
+	int request_id;
+
+	srand(time(NULL));
+	request_id = (rand() % 999999999) + 1;
+	convert << request_id;
+	req_id = convert.str();
+	convert.str("");
+
+
+	if(!TimeFunction(created_on, depart_time)) {
+		message("\nRoute creation failed! Please try again.");
+		return false;
+	}
+
+	ss << "INSERT INTO request VALUES('" << req_id << "', '" << seats_req << "', '" << depart_time <<
+	"', '" << created_on << "', '" << start_loc << "', '" << end_loc << "')\n";	
+	if(mysql_query(db_conn, ss.str().c_str())) {
+		message("\nRequest failed! Please try again.");
+		return false;
+	}
+		
+	return true;
 }
 
 void CarpoolTransaction::message(string msg) {

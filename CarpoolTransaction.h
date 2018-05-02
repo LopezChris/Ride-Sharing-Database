@@ -31,9 +31,16 @@ class CarpoolTransaction {
 			bool EditAccount(const string attribute, string sjid, const string attribute_value);
 			void DeleteAccount(const string sjid);
 			bool GetPasswdAttribute(const string passwd, const string sjid);
-						
+
 			bool GetDriverInfo(const string sjid);
-			bool AddDriverInfo(const string lic_no, const string sjid, const string exp_date);
+			bool AddDriverInfo(const string lic_no, const string sjid, const string exp_date,
+				const string reg_num, const string insurer, const string max_seats,
+				const string model, const string make);
+			bool CreateRoute(const string sjid, string start_loc, string end_loc);
+			bool TimeFunction(string &created_on, string &depart_time);
+			bool FindMatch(const string sjid);
+
+			bool CreateRequest(const string sjid, string start_loc, string end_loc, string seats_req);
 
 			void message(string);
 

@@ -7,11 +7,12 @@
 
 enum Main_Menu_Options { CONNECT = 1, SIGN_UP, SIGN_IN, SIGN_OUT };
 enum Menu_One_Options { EDIT_ACCOUNT = 5, DELETE_ACCOUNT, DRIVE, RIDE, _SIGN_OUT };
-enum Edit_Menu_Options {SJID = 1, EMAIL, UNAME, ADDR, NAME, PASSWD, UTYPE, ANS_SQ1, ANS_SQ2, DONE, _SIGN_OUT_};
-enum Driver_Menu {MAKE_ROUTE = 11, __SIGN_OUT};
+enum Edit_Menu_Options { SJID = 1, EMAIL, UNAME, ADDR, NAME, PASSWD, UTYPE, ANS_SQ1, ANS_SQ2, DONE, _SIGN_OUT_ };
+enum Drive_Menu_Options { MAKE_ROUTE = 1, __SIGN_OUT_ };
+enum Ride_Menu_Options { MAKE_REQUEST = 1, __SIGN_OUT__ };
 
 int Main_Menu() {
-	int choice;
+	char choice;
 
 	cout << "Main Menu Options\n"
 		 << "-----------------\n"
@@ -23,11 +24,11 @@ int Main_Menu() {
 	cin  >> choice;
 	cin.ignore(1000, '\n');
 
-	return choice;
+	return (choice - '0');
 }
 
 int Menu_One() {
-	int choice;
+	char choice;
 
 	cout << "Menu One Options\n"
 		 << "----------------\n"
@@ -40,11 +41,11 @@ int Menu_One() {
 	cin  >> choice;
 	cin.ignore(1000, '\n');
 
-	return choice;
+	return (choice - '0');
 }
 
 int Edit_Menu() {
-	int choice;
+	char choice;
 
 	cout << "\nEdit Menu Options\n"
 		 << "-----------------\n"
@@ -59,46 +60,60 @@ int Edit_Menu() {
 		 << "9  - Edit Answer to Security Question Two\n"
 		 << "10 - Done\n"
 		 << "11 - Sign Out\n"
+		 << "Choose and operation and then press return: ";
+	cin  >> choice;
+	cin.ignore(1000, '\n');
+
+	return (choice - '0');
+}
+
+int Drive_Menu() {
+	char choice;
+
+	cout << "\nDrive Menu Options\n"
+		 << "------------------\n"
+		 << "1 - Make a Route\n"
+		 << "2 - Sign Out\n"
 		 << "Choose an operation and then press return: ";
 	cin  >> choice;
 	cin.ignore(1000, '\n');
 
-	return choice;
+	return (choice - '0');
 }
 
-int Driver_Menu(){
-	int choice;
+int Ride_Menu() {
+	char choice;
 
-	cout << "\nDriver Menu Options\n"
-		<< "-------------------\n"
-		<< "1 - Make a route\n"
-		<< "2 - Sign out\n"
-		<< "Choose an operation and then press return: ";
-	cin >> choice;
+	cout << "\nRide Menu Options\n"
+		 << "-----------------\n"
+		 << "1 - Make a Request\n"
+		 << "2 - Sign Out\n"
+		 << "Choose an operation and then press return: ";
+	cin  >> choice;
 	cin.ignore(1000, '\n');
 
-	return choice;
+	return (choice - '0');
 }
 
 int main() {
 	int choice, count = 0;
 	char ch;
 	bool MainMenu = true;
-	bool MenuOne = false, MenuTwo = false, EditMenu = false, DriverMenu = false;
+	bool MenuOne = false, MenuTwo = false;
 	bool SignIn = false, passwdFlag;
 	CarpoolTransactionPtr cpt = new CarpoolTransaction;
 	string db_host, db_username, db_passwd, db_dbname;
 	string sjid, email, uname, addr, name, passwd, temp_passwd, utype, ans_sq_one, ans_sq_two;
 	string new_sjid, new_email, new_uname, new_addr, new_name, new_passwd, new_temp_passwd,
 		   new_utype, new_ans_sq_one, new_ans_sq_two;
-	string lic_no, exp_date;
+	string lic_no, exp_date, reg_num, insurer, max_seats, model, make;
+	string start_loc, end_loc, seats_req;
 
 	while(1) {
 		if(MainMenu) choice = Main_Menu();
 		else if(MenuOne)  { choice = Menu_One(); choice += 4; }
-		else if(DriverMenu) {choice = Driver_Menu(); choice += 10;}
 
-		if((choice == SIGN_OUT) || (choice == _SIGN_OUT || (choice == __SIGN_OUT))) break;
+		if((choice == SIGN_OUT) || (choice == _SIGN_OUT)) break;
 
 		switch(choice) {
 			case CONNECT:
@@ -147,7 +162,6 @@ int main() {
 				}while(!cpt->Sign_Up(new CarpoolAccount(sjid, email, uname, addr, name,
 					passwd, utype, ans_sq_one, ans_sq_two)));
 				email = uname = addr = name = passwd = temp_passwd = utype = ans_sq_one = ans_sq_two = "";
-				//SJSU ID is already known: the variable sjid
 				MainMenu = false; 
 				MenuOne = true;
 				cout << endl;
@@ -300,22 +314,75 @@ int main() {
 
 			case DRIVE:
 				cout << endl;
-				do{
-					if(!cpt->GetDriverInfo(sjid)){
-						cout << "Enter your license number: ";
+				do {
+					if(!cpt->GetDriverInfo(sjid)) {
+						cout << "Enter license number: ";
 						getline(cin, lic_no, '\n');
-						cout << "Enter your license expiration date: ";
-						getline(cin, exp_date, '\n');
-					
+						cout << "Enter license expiration date: ";
+						getline(cin, exp_date, '\n'); //regnum, insurance, max_seats, model, make
+						cout << "Enter vehicle registration number: ";
+						getline(cin, reg_num, '\n');
+						cout << "Enter vehicle insurer: ";
+						getline(cin, insurer, '\n');
+						cout << "Enter vehicle maximum passenger capacity: ";
+						getline(cin, max_seats, '\n');
+						cout << "Enter vehicle model: ";
+						getline(cin, model, '\n');
+						cout << "Enter vehicle make: ";
+						getline(cin, make, '\n');
 					}
-				}while(!cpt->GetDriverInfo(sjid) && !cpt->AddDriverInfo(lic_no, sjid, exp_date));
-				DriverMenu = true;
-				MenuOne = false;
-				lic_no = exp_date = "";
-				cout << endl;
-					
-				break;
+				}while((!cpt->GetDriverInfo(sjid)) && (!cpt->AddDriverInfo(lic_no, sjid, exp_date,
+					reg_num, insurer, max_seats, model, make)));
+				lic_no = exp_date = reg_num = insurer = max_seats = model = make = "";
+				while(1) {
+					choice = Drive_Menu();
+					if(choice == __SIGN_OUT_) return 0;
 
+					switch(choice) {
+						case MAKE_ROUTE:
+							cout << endl;
+							do {
+								cout << "Enter start location: ";
+								getline(cin, start_loc, '\n');
+								cout << "Enter end location: ";
+								getline(cin, end_loc, '\n');
+							}
+							while(!cpt->CreateRoute(sjid, start_loc, end_loc));
+							//find match in request table
+							//return a match to driver:
+								//driver accepts: 
+								//driver rejects
+							
+					}
+				}
+				cout << endl;
+				break;
+				
+
+			case RIDE:
+				cout << endl;
+
+				while(1) {
+					choice = Ride_Menu();
+					if(choice == __SIGN_OUT__) return 0;
+
+					switch(choice) {
+						case MAKE_REQUEST:
+							cout << endl;
+							do {
+								cout << "Enter start location: ";
+								getline(cin, start_loc, '\n');
+								cout << "Enter end location: ";
+								getline(cin, end_loc, '\n');
+								cout << "Enter number of requested seats: ";
+								getline(cin, seats_req, '\n');
+							}while(!cpt->CreateRequest(sjid, start_loc, end_loc, seats_req));
+							//check status
+							//void Check_Status(sjid);
+							break;
+					}
+				}
+			
 			default:
 				cerr << "\nInvalid Operation Selected!\n\n";
 				break;
