@@ -352,13 +352,20 @@ bool CarpoolTransaction::CreateRoute(const string sjid, string start_loc, string
 		res = mysql_use_result(db_conn);
 		row = mysql_fetch_row(res);
 		l_num = *row;
-		cout << l_num;
 		mysql_free_result(res);
 		if(row == NULL) {
 			message("\nRoute creation2 failed! Please try again.");
 			//mysql_free_result(res);
 			return false;
 		}
+	}
+	ss.str("");
+	ss << "INSERT INTO route VALUES('" << rte_id << "', '" << created_on << "', '"
+	   << depart_time << "', '" << short_dist << "', '" << start_loc << "', '"
+	   << end_loc << "')";
+	if(mysql_query(db_conn, ss.str().c_str())) {
+		message("\nRoute creation4 failed! Please try again.");
+		return false;
 	}
 	ss.str("");
 	ss << "INSERT INTO has1 VALUES('" << l_num << "', '" << rte_id << "')";
@@ -371,14 +378,7 @@ bool CarpoolTransaction::CreateRoute(const string sjid, string start_loc, string
 	}
 	//mysql_free_result(res);
 
-	ss.str("");
-	ss << "INSERT INTO route VALUES('" << rte_id << "', '" << created_on << "', '"
-	   << depart_time << "', '" << short_dist << "', '" << start_loc << "', '"
-	   << end_loc << "')";
-	if(mysql_query(db_conn, ss.str().c_str())) {
-		message("\nRoute creation4 failed! Please try again.");
-		return false;
-	}
+	
 	
 	return true;
 }
