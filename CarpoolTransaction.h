@@ -40,7 +40,8 @@ class CarpoolTransaction {
 			bool TimeFunction(string &created_on, string &depart_time);
 			bool FindMatch(const string sjid);
 
-			bool CreateRequest(const string sjid, string start_loc, string end_loc, string seats_req);
+			bool CreateRequest(const string sjid, string start_loc, string end_loc, string seats_req, string &route_n);
+			bool CheckStatus(const string route_id);
 
 			void message(string);
 

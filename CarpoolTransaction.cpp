@@ -408,7 +408,7 @@ bool CarpoolTransaction::FindMatch(const string sjid) {
 }
 
 bool CarpoolTransaction::CreateRequest(const string sjid, string start_loc, string end_loc,
-	string seats_req) {
+	string seats_req, string &route_n) {
 
 	stringstream ss;	
 	ostringstream convert;
@@ -433,8 +433,36 @@ bool CarpoolTransaction::CreateRequest(const string sjid, string start_loc, stri
 		message("\nRequest failed! Please try again.");
 		return false;
 	}
-		
+	
+	route_n = req_id;	
 	return true;
+}
+
+bool CarpoolTransaction::CheckStatus(const string route_id){
+	stringstream ss;
+	MYSQL_ROW row;
+	MYSQL_RES *rset;
+	ss << "SELECT ACCPT_REJ FROM matches WHERE RT_ID = '" << route_id << "'";
+	if(mysql_query(db_conn, ss.str().c_str())) {
+		message("\nRequest check failed! Please try again.");
+		return false;
+	}
+
+		rset = mysql_use_result(db_conn);
+		row = mysql_fetch_row(rset);
+		if(row == NULL) {mysql_free_result(rset); return false;}
+		else if(*row == "1"){
+			mysql_free_result(rset);
+			message("Your ride is on the way!\n");
+			return true;	
+		}
+		else{
+			message("Your ride is not yet on the way!\n");
+			mysql_free_result(rset);
+			return false;
+		}
+		
+	
 }
 
 void CarpoolTransaction::message(string msg) {
