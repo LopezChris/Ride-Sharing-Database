@@ -2,53 +2,54 @@ drop database if exists SJSUber;
 create database SJSUber;
 use SJSUber;
 
+
 CREATE TABLE user(
-    SJSU_ID		CHAR(9)			NOT NULL 	UNIQUE,
-    EMAIL		VARCHAR(50) 		NOT NULL 	UNIQUE,
-    USER_NAME		VARCHAR(25)		NOT NULL 	UNIQUE,
-    ADDRESS		VARCHAR(50)		NOT NULL,
-    NAME		VARCHAR(50)		NOT NULL,
-    PASSWORD		VARCHAR(25)		NOT NULL,
-    USER_TYPE		VARCHAR(10)		NOT NULL,
-    ANSWER_SQ1		VARCHAR(50)		NOT NULL,
-    ANSWER_SQ2		VARCHAR(50)		NOT NULL,
+    SJSU_ID			CHAR(9)				NOT NULL 		UNIQUE,
+    EMAIL			VARCHAR(50) 		NOT NULL 		UNIQUE,
+    USER_NAME		VARCHAR(25)			NOT NULL 		UNIQUE,
+    ADDRESS			VARCHAR(50)			NOT NULL,	
+    NAME			VARCHAR(50)			NOT NULL,
+    PASSWORD		VARCHAR(25)			NOT NULL,
+    USER_TYPE		VARCHAR(10)			NOT NULL,
+    ANSWER_SQ1		VARCHAR(50)			NOT NULL,
+    ANSWER_SQ2		VARCHAR(50)			NOT NULL,
     PRIMARY KEY(SJSU_ID)
 );
 
 CREATE TABLE driver(
-    LICENSE_NUM		CHAR(9)			NOT NULL	UNIQUE,
-    SJID		CHAR(9)			NOT NULL,
-    EXP_DATE		CHAR(8)			NOT NULL,
+    LICENSE_NUM		CHAR(9)				NOT NULL		UNIQUE,
+    SJID			CHAR(9)				NOT NULL,
+    EXP_DATE		CHAR(8)				NOT NULL,
     PRIMARY KEY(LICENSE_NUM),
     FOREIGN KEY (SJID) REFERENCES user (SJSU_ID) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE cars(
-    LIC_NUM		CHAR(9)			NOT NULL	UNIQUE,
-    REG_NUM		CHAR(9)			NOT NULL	UNIQUE,
-    INSURANCE		VARCHAR(25)		NOT NULL,
-    MAX_SEATS		CHAR(1)			NOT NULL,
-    MODEL		VARCHAR(25)		NOT NULL,
-    MAKE		VARCHAR(25)		NOT NULL,
+    LIC_NUM			CHAR(9)				NOT NULL		UNIQUE,
+    REG_NUM			CHAR(9)				NOT NULL		UNIQUE,
+    INSURANCE		VARCHAR(25)			NOT NULL,
+    MAX_SEATS		CHAR(1)				NOT NULL,
+    MODEL			VARCHAR(25)			NOT NULL,
+    MAKE			VARCHAR(25)			NOT NULL,
     PRIMARY KEY(REG_NUM),
     FOREIGN KEY (LIC_NUM) REFERENCES driver (LICENSE_NUM) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE route(
-    ROUTE_ID		CHAR(9)			NOT NULL	UNIQUE,
-    CREATED_ON		CHAR(50)		NOT NULL,
-    DEPART_TIME		CHAR(8)			NOT NULL,
-    SHORTEST_DIST	CHAR(2)			NOT NULL,
+    ROUTE_ID		CHAR(9)				NOT NULL		UNIQUE,
+    CREATED_ON		date				NOT NULL,
+    DEPART_TIME		time				NOT NULL,
+    SHORTEST_DIST	CHAR(2)				NOT NULL,
     START_LOC		VARCHAR(100)		NOT NULL,
-    END_LOC		VARCHAR(100)		NOT NULL,
+    END_LOC			VARCHAR(100)		NOT NULL,
     PRIMARY KEY(ROUTE_ID)
 );
 
 CREATE TABLE stop(
-    STOP_ID		CHAR(9)			NOT NULL	UNIQUE,
-    PICKUP_LOC		VARCHAR(100)		NOT NULL,
-    DROPOFF_LOC		VARCHAR(100)		NOT NULL,
-    STOP_CREATED_ON	CHAR(50)		NOT NULL,
+    STOP_ID				CHAR(9)			NOT NULL		UNIQUE,
+    PICKUP_LOC			VARCHAR(100)	NOT NULL,
+    DROPOFF_LOC			VARCHAR(100)	NOT NULL,
+    STOP_CREATED_ON	date				NOT NULL,
     STOP_DEPART_TIME 	CHAR(50)		NOT NULL,
     PRIMARY KEY(STOP_ID)
 );
@@ -73,10 +74,10 @@ CREATE TABLE has1(
 CREATE TABLE request(
     REQUEST_ID		CHAR(9)			NOT NULL	UNIQUE,
     SEATS_REQST		CHAR(1)			NOT NULL,
-    DEPART_TIME		CHAR(50)		NOT NULL,
-    CREATED_ON		CHAR(50)		NOT NULL,
-    START_LOC		VARCHAR(100)		NOT NULL,
-    END_LOC		VARCHAR(100)		NOT NULL,
+    DEPART_TIME		time 			NOT NULL,
+    CREATED_ON		date			NOT NULL,
+    START_LOC		VARCHAR(100)	NOT NULL,
+    END_LOC			VARCHAR(100)	NOT NULL,
     PRIMARY KEY	(REQUEST_ID)
 );
 
@@ -91,12 +92,15 @@ CREATE TABLE makes(
 
 CREATE TABLE matches(
     RT_ID		CHAR(9)			NOT NULL,
-    RQUST_ID		CHAR(9)			NOT NULL,
-    ACCPT_REJ		CHAR(1),
+    RQUST_ID	CHAR(9)			NOT NULL,
+    ACCPT_REJ	CHAR(1),
     PRIMARY KEY	(RT_ID),
     FOREIGN KEY	(RT_ID)	REFERENCES	route	(ROUTE_ID) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY	(RQUST_ID)	REFERENCES request	(REQUEST_ID) ON UPDATE CASCADE ON DELETE CASCADE
 );
+
+
+  
 
 insert into user values('103034004', 'Moira.Nickel@sjsu.edu', 'fossashriek', '5 Myers Dr. Yakima, WA 98908', ' Moira Nickel', 'GeZJuzAe', 'Staff', ' Squint', 'Spot');
 insert into user values('159030021', 'Fatima.Hauck@sjsu.edu', 'dovestechnician', '9172 Manor Station St. Massillon, OH 44646', ' Fatima Hauck', 'JuZLFXDX', 'Staff', ' Mila', 'Marshmallow');
@@ -134,17 +138,16 @@ insert into cars values('663662857', '410011144', ' Farmers', '4', 'FR-S', 'Scio
 insert into cars values('434120715', '930141961', ' Geiko', '4', 'Wrangler', 'Jeep');
 
 
-
-insert into route values('534120707', 'Sun Apr 29 14:47:33 2018', '22', '1', '5 Myers Dr. Los Gatos, CA 95212', 'SJSU');
-insert into route values('641515524', 'Sun Apr 29 14:47:33 2018', '23', '2', '9172 Manor Station San Jose, CA 95123', 'SJSU');
-insert into route values('926217477', 'Sun Apr 29 14:47:33 2018', '24', '3', '268 Main San Jose, CA 95122', 'SJSU');
-insert into route values('748764677', 'Sun Apr 29 14:47:33 2018', '25', '4', '400 College Street Milpitas, CA 95110', 'SJSU');
-insert into route values('216406278', 'Sun Apr 29 14:47:33 2018', '26', '5', '9095 Lyme San Jose, CA 95125', 'SJSU');
-insert into route values('630141959', 'Sun Apr 29 14:47:33 2018', '27', '6', '15 Sheffield San Jose, CA 95124', 'SJSU');
-insert into route values('604524296', 'Sun Apr 29 14:47:33 2018', '28', '7', '9703 Thorne Drive San Jose, CA 95120', 'SJSU');
-insert into route values('380014856', 'Sun Apr 29 14:47:33 2018', '29', '8', '329 Swanson San Jose, CA 95122', 'SJSU');
-insert into route values('692950794', 'Sun Apr 29 14:47:33 2018', '30', '9', '7168 S. Ridgeview St. Campbell, CA 72209', 'SJSU');
-insert into route values('557521930', 'Sun Apr 29 14:47:33 2018', '31', '10', '8083 Lilac Willow Glen, CA 10954', 'SJSU');
+insert into route values('534120707', '2018-05-02', ' 13:30:03 ', '1', '5 Myers Dr. Los Gatos, CA 95212', 'SJSU');
+insert into route values('641515524', '2018-05-02', ' 13:30:03 ', '2', '9172 Manor Station San Jose, CA 95123', 'SJSU');
+insert into route values('926217477', '2018-05-02', ' 13:30:03 ', '3', '268 Main San Jose, CA 95122', 'SJSU');
+insert into route values('748764677', '2018-05-02', ' 13:30:03 ', '4', '400 College Street Milpitas, CA 95110', 'SJSU');
+insert into route values('216406278', '2018-05-02', ' 13:30:03 ', '5', '9095 Lyme San Jose, CA 95125', 'SJSU');
+insert into route values('630141959', '2018-05-02', ' 13:30:03 ', '6', '15 Sheffield San Jose, CA 95124', 'SJSU');
+insert into route values('604524296', '2018-05-02', ' 13:30:03 ', '7', '9703 Thorne Drive San Jose, CA 95120', 'SJSU');
+insert into route values('380014856', '2018-05-02', ' 13:30:03 ', '8', '329 Swanson San Jose, CA 95122', 'SJSU');
+insert into route values('692950794', '2018-05-02', ' 13:30:03 ', '9', '7168 S. Ridgeview St. Campbell, CA 72209', 'SJSU');
+insert into route values('557521930', '2018-05-02', ' 13:30:03 ', '10', '8083 Lilac Willow Glen, CA 10954', 'SJSU');
 
 
 insert into route values('534120706', 'Sun Apr 29 14:47:33 2018', '22', '1', 'SJSU', '5 Myers Dr. Los Gatos, CA 95212');

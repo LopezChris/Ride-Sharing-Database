@@ -147,6 +147,18 @@ insert into route values('692950794', 'Sun Apr 29 14:47:33 2018', '30', '9', '71
 insert into route values('557521930', 'Sun Apr 29 14:47:33 2018', '31', '10', '8083 Lilac Willow Glen, CA 10954', 'SJSU');
 
 
+insert into route values('534120706', 'Sun Apr 29 14:47:33 2018', '22', '1', 'SJSU', '5 Myers Dr. Los Gatos, CA 95212');
+insert into route values('641515523', 'Sun Apr 29 14:47:33 2018', '23', '2', 'SJSU', '9172 Manor Station San Jose, CA 95123');
+insert into route values('926217476', 'Sun Apr 29 14:47:33 2018', '24', '3', 'SJSU', '268 Main San Jose, CA 95122');
+insert into route values('748764676', 'Sun Apr 29 14:47:33 2018', '25', '4', 'SJSU', '400 College Street Milpitas, CA 95110');
+insert into route values('216406277', 'Sun Apr 29 14:47:33 2018', '26', '5', 'SJSU', '9095 Lyme San Jose, CA 95125');
+insert into route values('630141958', 'Sun Apr 29 14:47:33 2018', '27', '6', 'SJSU', '15 Sheffield San Jose, CA 95124');
+insert into route values('604524295', 'Sun Apr 29 14:47:33 2018', '28', '7', 'SJSU', '9703 Thorne Drive San Jose, CA 95120');
+insert into route values('380014855', 'Sun Apr 29 14:47:33 2018', '29', '8', 'SJSU', '329 Swanson San Jose, CA 95122');
+insert into route values('692950793', 'Sun Apr 29 14:47:33 2018', '30', '9', 'SJSU', '7168 S. Ridgeview St. Campbell, CA 72209');
+insert into route values('557521939', 'Sun Apr 29 14:47:33 2018', '31', '10', ' SJSU', '8083 Lilac Willow Glen, CA 10954');
+
+
 insert into stop values('261846273', '5 Myers Dr. Los Gatos, CA 95212', 'SJSU', 'Sun Apr 29 14:32:04 2018', 'Sun Apr 29 14:52:04 2018');
 insert into stop values('688118018', '9172 Manor Station San Jose, CA 95123', 'SJSU', 'Sun Apr 29 14:32:04 2018', 'Sun Apr 29 15:32:04 2018');
 insert into stop values('168841219', '268 Main San Jose, CA 95122', 'SJSU', 'Sun Apr 29 14:32:04 2018', 'Sun Apr 29 14:32:04 2018');
